@@ -1,0 +1,5 @@
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.csproj.AssemblyReference.cache
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.GeneratedMSBuildEditorConfig.editorconfig
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.AssemblyInfoInputs.cache
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.AssemblyInfo.cs
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.csproj.CoreCompileInputs.cache
