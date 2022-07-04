@@ -66,6 +66,10 @@ public sealed class EnterMineAndDigForNuggetState : MinerState
         
         // 2. 增加疲劳度
         miner.CurrentTirednessThreshold++;
+
+        // 3. 增加饥渴度
+        miner.CurrentThirstLevel++;
+        
         WriteExt.WriteBgWhiteAndFgBlue($"MinerId:{miner.InsId}, EnterMineAndDigForNuggetState，挖到了金子");
         
         // 3. 判断背包是否满了
@@ -98,7 +102,7 @@ public sealed class EnterMineAndDigForNuggetState : MinerState
         {
             return;
         }
-        WriteExt.WriteBgWhiteAndFgRed($"MinerId:{miner.InsId}, EnterMineAndDigForNuggetState，金子满了，退出金矿挖矿");
+        WriteExt.WriteBgWhiteAndFgRed($"MinerId:{miner.InsId}, EnterMineAndDigForNuggetState，状态改变,退出金矿挖矿");
         base.Exit(miner);
         Console.WriteLine('\n');
     }
