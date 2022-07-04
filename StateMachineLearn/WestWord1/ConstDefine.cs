@@ -24,4 +24,72 @@ public static class ConstDefine
         /// </summary>
         public const int TirednessThresholdMaxVal = 5;
     }
+
+    public static class Location
+    {
+        /// <summary>
+        /// 位置
+        /// </summary>
+        public enum MinerLocationType
+        {
+            /// <summary>
+            /// 无效位置 - 代码逻辑使用
+            /// </summary>
+            None,
+            
+            /// <summary>
+            /// 金矿
+            /// </summary>
+            Goldmine,
+            
+            /// <summary>
+            /// 酒吧
+            /// </summary>
+            Saloon,
+            
+            /// <summary>
+            /// 银行
+            /// </summary>
+            Bank,
+            
+            /// <summary>
+            /// 家里
+            /// </summary>
+            Home
+        }
+    }
+    
+    public static class MinerState
+    {
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public enum MinerStateType
+        {
+            /// <summary>
+            /// 无效状态 - 代码逻辑使用
+            /// </summary>
+            None,
+            
+            /// <summary>
+            /// 去矿洞挖矿 
+            /// </summary>
+            EnterMineAndDigForNugget,
+            
+            /// <summary>
+            /// 去银行存钱
+            /// </summary>
+            VisitBankAndDepositGold,
+            
+            /// <summary>
+            /// 回家休息
+            /// </summary>
+            GoHomeAndSleepTilRested,
+            
+            /// <summary>
+            /// 解决口渴
+            /// </summary>
+            QuenchThirst
+        }
+    }
 }

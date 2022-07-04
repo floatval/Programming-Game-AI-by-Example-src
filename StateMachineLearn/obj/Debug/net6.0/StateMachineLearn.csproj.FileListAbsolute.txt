@@ -3,3 +3,13 @@ D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.GeneratedMSBui
 D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.AssemblyInfoInputs.cache
 D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.AssemblyInfo.cs
 D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.csproj.CoreCompileInputs.cache
+D:\GameLearn\StateMachineLearn\bin\Debug\net6.0\StateMachineLearn.exe
+D:\GameLearn\StateMachineLearn\bin\Debug\net6.0\StateMachineLearn.deps.json
+D:\GameLearn\StateMachineLearn\bin\Debug\net6.0\StateMachineLearn.runtimeconfig.json
+D:\GameLearn\StateMachineLearn\bin\Debug\net6.0\StateMachineLearn.dll
+D:\GameLearn\StateMachineLearn\bin\Debug\net6.0\ref\StateMachineLearn.dll
+D:\GameLearn\StateMachineLearn\bin\Debug\net6.0\StateMachineLearn.pdb
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.dll
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\ref\StateMachineLearn.dll
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.pdb
+D:\GameLearn\StateMachineLearn\obj\Debug\net6.0\StateMachineLearn.genruntimeconfig.cache

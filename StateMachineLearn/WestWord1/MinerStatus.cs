@@ -1,6 +1,1 @@
 ﻿namespace StateMachineLearn;
-
-enum MinerStatus
-{
-    
-}

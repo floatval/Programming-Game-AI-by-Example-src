@@ -6,19 +6,19 @@ public interface IMinerState
     /// 进入状态处理流程
     /// </summary>
     /// <param name="miner"></param>
-    void Enter(Miner miner);
-    
+    void Enter(IMiner miner);
+
     /// <summary>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="miner"></param>
-    void Execute(Miner miner);
-    
+    void Execute(IMiner miner);
+
     /// <summary>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="miner"></param>
-    void Exit(Miner miner);
+    void Exit(IMiner miner);
 }
 
 /// <summary>
@@ -32,7 +32,7 @@ public abstract class MinerState: IMinerState
     /// 进入状态处理流程
     /// </summary>
     /// <param name="miner"></param>
-    public virtual void Enter(Miner miner)
+    public virtual void Enter(IMiner miner)
     {
     }
 
@@ -40,7 +40,7 @@ public abstract class MinerState: IMinerState
     ///  运行状态处理流程
     /// </summary>
     /// <param name="miner"></param>
-    public virtual void Execute(Miner miner)
+    public virtual void Execute(IMiner miner)
     {
     }
 
@@ -48,7 +48,7 @@ public abstract class MinerState: IMinerState
     /// 退出状态处理流程
     /// </summary>
     /// <param name="miner"></param>
-    public virtual void Exit(Miner miner)
+    public virtual void Exit(IMiner miner)
     {
     }
 

@@ -6,16 +6,21 @@
 public interface IBaseGameEntity
 {
     public void Update();
+    
+    /// <summary>
+    /// 实例 Id
+    /// </summary>
+    public int InsId { get; set; }
 }
 
 /// <summary>
 /// 基础游戏条目抽象类
 /// </summary>
-public abstract class BaseGameEntity : IBaseGameEntity
+public class BaseGameEntity : IBaseGameEntity
 {
     public class BaseGameEntityBuilder
     {
-        private BaseGameEntity _baseGameEntity;
+        private readonly BaseGameEntity m_baseGameEntity = new BaseGameEntity();
 
         /// <summary>
         /// 构造游戏条目的实例 Id
@@ -26,18 +31,18 @@ public abstract class BaseGameEntity : IBaseGameEntity
         public BaseGameEntityBuilder BuildEntityId(int id)
         {
             // 1. 检查传入的 Id 的有效性，如果 Id 无效，则抛出异常
-            if (id < _nextValidId)
+            if (id < NextValidId)
             {
                 throw new ArgumentException("Invalid entity id " + id);
             }
             
             // 2. 构造 Id
-            _baseGameEntity.InsId = id;
+            m_baseGameEntity.InsId = id;
             
             // 3. 更新有效 id
             checked
             {
-                ++_nextValidId;
+                ++NextValidId;
             }
             
             return this;
@@ -50,19 +55,19 @@ public abstract class BaseGameEntity : IBaseGameEntity
     public BaseGameEntity()
     {
     }
-    
+
     /// <summary>
     /// 当前对象的实例 Id
     /// </summary>
-    public int InsId { get; private set; }
-    
+    public int InsId { get; set; }
+
     /// <summary>
     /// 生成对象序列中，下一个对象的有效 Id
     /// 该 Id 自动在对象创建的时候自增 1
     /// 如果在创建对象的时候传入的 InsId 初始值是否 大于等于 _nextValidId，如果不满足条件则抛出异常
     /// </summary>
     /// <exception cref="Exception"></exception>
-    private static int _nextValidId { get; set; }
+    protected static int NextValidId { get; set; }
 
     #region Implementation of IBaseGameEntity
 
