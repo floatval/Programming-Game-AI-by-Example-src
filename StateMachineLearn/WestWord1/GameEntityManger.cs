@@ -16,7 +16,7 @@ public class GameEntityManger
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public bool TryAddNewEntity([NotNull]IBaseGameEntity entity)
+    public bool TryAddNewEntity(IBaseGameEntity entity)
     {
         Debug.Assert(entity!= null, "entity is null");
         

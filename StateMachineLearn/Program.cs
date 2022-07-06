@@ -2,11 +2,7 @@
 
 using StateMachineLearn;
 
-var miner = new Miner(0)
-{
-    CurrentLocation = ConstDefine.Location.MinerLocationType.None,
-    StateMachine = new EnterMineAndDigForNuggetState()
-};
+var miner = new Miner(new InitState(), new InitState());
 
 GameEntityManger.Instance.TryAddNewEntity(miner);
 

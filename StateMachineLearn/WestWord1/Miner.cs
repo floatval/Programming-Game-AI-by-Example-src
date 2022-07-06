@@ -1,9 +1,5 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-
-namespace StateMachineLearn;
-using Location = StateMachineLearn.ConstDefine.Location.MinerLocationType;
-using Status = StateMachineLearn.ConstDefine.MinerState.MinerStateType;
+﻿namespace StateMachineLearn;
+using Location = ConstDefine.Location.MinerLocationType;
 
 /// <summary>
 /// 矿工接口
@@ -31,17 +27,12 @@ public interface IMiner : IBaseGameEntity
     /// 当前位置
     /// </summary>
     public Location CurrentLocation { get; set; }
-    
-    /// <summary>
-    /// 矿工当前的状态
-    /// </summary>
-    public  Status CurrentStatus { get; set; }
-    
+
     /// <summary>
     /// 状态机
     /// </summary>
-    public IMinerState StateMachine { get; set; }
-    
+    public StateMachine<Miner> FSM { get; }
+
     #endregion
 
     #region 方法属性
@@ -76,14 +67,6 @@ public interface IMiner : IBaseGameEntity
     /// <returns></returns>
     public bool IsNotThirsty();
     
-    
-    /// <summary>
-    /// 变更矿工状态
-    /// </summary>
-    /// <param name="state"></param>
-    /// <returns></returns>
-    public bool ChangeState(IMinerState state);
-    
     #endregion
 }
 
@@ -92,11 +75,12 @@ public interface IMiner : IBaseGameEntity
 /// </summary>
 public class Miner : BaseGameEntity, IMiner
 {
-    public Miner(int id)
+    public Miner(IState<Miner> initState, IState<Miner> preState)
     {
+        FSM = new StateMachine<Miner>(this, initState, preState);
     }
-    
-    #region Overrides of BaseGameEntity
+
+    #region 覆写
 
     /// <summary>
     /// 刷新条目当前的状态 - 每帧(每次循环)调用
@@ -107,7 +91,7 @@ public class Miner : BaseGameEntity, IMiner
         base.Update();
         
         // 2. 运行当前状态的处理 - 内部可能会更新矿工的状态
-        StateMachine.Execute(this);
+        FSM.Update();
     }
 
     #endregion
@@ -133,16 +117,11 @@ public class Miner : BaseGameEntity, IMiner
     /// 当前位置
     /// </summary>
     public Location CurrentLocation { get; set; } = Location.None;
-    
-    /// <summary>
-    /// 矿工当前的状态
-    /// </summary>
-    public  Status CurrentStatus { get; set; } = Status.None;
-    
+
     /// <summary>
     /// 状态机
     /// </summary>
-    public IMinerState StateMachine { get; set; } = new InitState();
+    public StateMachine<Miner> FSM { get; private set; }
 
     /// <summary>
     /// 背包是否满了
@@ -187,32 +166,6 @@ public class Miner : BaseGameEntity, IMiner
     public bool IsNotThirsty()
     {
         return CurrentThirstLevel == 0;
-    }
-
-    /// <summary>
-    /// 变更矿工状态
-    /// </summary>
-    /// <param name="state"></param>
-    /// <returns></returns>
-    public bool ChangeState([NotNull]IMinerState state)
-    {
-        Debug.Assert(state != null, "state is null");
-
-        // 1. 改变状态前和改变状态后是同一个状态
-        if (ReferenceEquals(StateMachine, state))
-        {
-            return false;
-        }
-        
-        // 2. 退出当前状态
-        StateMachine.Exit(this);
-        
-        // 3. 切换为新的状态
-        StateMachine = state;
-        // 3.1 进入新的状态
-        state.Enter(this);
-        
-        return true;
     }
 
     #endregion
