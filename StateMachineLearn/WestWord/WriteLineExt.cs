@@ -10,7 +10,7 @@ public static class WriteExt
     {
         Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(content);
+        Console.WriteLine(content + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         Console.ResetColor();
     }
 
@@ -22,7 +22,7 @@ public static class WriteExt
     {
         Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(content);
+        Console.WriteLine(content + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         Console.ResetColor();
     }
 
@@ -34,7 +34,7 @@ public static class WriteExt
     {
         Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine(content);
+        Console.WriteLine(content + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         Console.ResetColor();
     }
     

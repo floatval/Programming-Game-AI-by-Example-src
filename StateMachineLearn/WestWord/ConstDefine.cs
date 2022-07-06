@@ -30,7 +30,7 @@ public static class ConstDefine
         /// <summary>
         /// 位置
         /// </summary>
-        public enum MinerLocationType
+        public enum LocationType
         {
             /// <summary>
             /// 无效位置 - 代码逻辑使用
@@ -55,7 +55,17 @@ public static class ConstDefine
             /// <summary>
             /// 家里
             /// </summary>
-            Home
+            Home,
+            
+            /// <summary>
+            /// 洗手间
+            /// </summary>
+            BathRoom,
+            
+            /// <summary>
+            /// 客厅
+            /// </summary>
+            LivingRoom
         }
     }
     

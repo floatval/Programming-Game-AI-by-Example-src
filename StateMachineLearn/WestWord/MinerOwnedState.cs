@@ -26,9 +26,9 @@ public sealed class InitState : IState<Miner>
         }
         
         // 1. 将矿工放置到矿洞里面
-        owner.CurrentLocation= Location.MinerLocationType.Goldmine;
+        owner.CurrentLocation= Location.LocationType.Goldmine;
 
-        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{entity.InsId}, EnterMineAndDigForNuggetState，初始化状态：进入金矿");
+        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{entity.InsId}, 初始化状态：进入金矿");
     }
 
     /// <summary>
@@ -71,11 +71,11 @@ public sealed class EnterMineAndDigForNuggetState : IState<Miner>
         }
         
         // 1. 已经在矿洞里了，不进行额外的处理
-        if (owner.CurrentLocation == Location.MinerLocationType.Goldmine)
+        if (owner.CurrentLocation == Location.LocationType.Goldmine)
         {
             return;
         }
-        owner.CurrentLocation= Location.MinerLocationType.Goldmine;
+        owner.CurrentLocation= Location.LocationType.Goldmine;
 
         // 2. 不在矿洞里面则进行移动到矿洞的操作
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{entity.InsId}, EnterMineAndDigForNuggetState，进入金矿");
@@ -185,11 +185,11 @@ public sealed class VisitBankAndDepositGoldState : IState<Miner>
         }
         
         // 1. 切换矿工的位置
-        if(owner.CurrentLocation == Location.MinerLocationType.Bank)
+        if(owner.CurrentLocation == Location.LocationType.Bank)
         {
             return;
         }
-        owner.CurrentLocation = Location.MinerLocationType.Bank;
+        owner.CurrentLocation = Location.LocationType.Bank;
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, VisitBankAndDepositGoldState，进入银行");
     }
@@ -296,11 +296,11 @@ public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
         }
         
         // 1. 切换矿工位置
-        if(owner.CurrentLocation == Location.MinerLocationType.Home)
+        if(owner.CurrentLocation == Location.LocationType.Home)
         {
             return;
         }
-        owner.CurrentLocation = Location.MinerLocationType.Home;
+        owner.CurrentLocation = Location.LocationType.Home;
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，回到家里");
     }
@@ -403,11 +403,11 @@ public class QuenchThirstState : IState<Miner>
         }
         
         // 1. 切换位置
-        if(owner.CurrentLocation == Location.MinerLocationType.Saloon)
+        if(owner.CurrentLocation == Location.LocationType.Saloon)
         {
             return;
         }
-        owner.CurrentLocation = Location.MinerLocationType.Saloon;
+        owner.CurrentLocation = Location.LocationType.Saloon;
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, QuenchThirstState，进入酒吧");
     }
@@ -495,11 +495,11 @@ public class MinerGlobalState : IState<Miner>
         }
         
         // 1. 切换位置
-        if(owner.CurrentLocation == Location.MinerLocationType.Saloon)
+        if(owner.CurrentLocation == Location.LocationType.Saloon)
         {
             return;
         }
-        owner.CurrentLocation = Location.MinerLocationType.Saloon;
+        owner.CurrentLocation = Location.LocationType.Saloon;
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, QuenchThirstState，进入酒吧");
     }

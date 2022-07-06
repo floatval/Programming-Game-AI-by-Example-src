@@ -18,35 +18,13 @@ public interface IBaseGameEntity
 /// </summary>
 public class BaseGameEntity : IBaseGameEntity
 {
-    public class BaseGameEntityBuilder
-    {
-        private readonly BaseGameEntity m_baseGameEntity = new();
-
-        /// <summary>
-        /// 构造游戏条目的实例 Id
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">id 无效时抛出异常</exception>
-        public BaseGameEntityBuilder BuildEntityId()
-        {
-            // 2. 构造 Id
-            m_baseGameEntity.InsId = NextValidId;
-            
-            // 3. 更新有效 id
-            checked
-            {
-                ++NextValidId;
-            }
-            
-            return this;
-        }
-    }
-    
     /// <summary>
     /// 防止外部绕过 Builder 创建对象
     /// </summary>
     protected BaseGameEntity()
     {
+        InsId = NextValidId;
+        ++NextValidId;
     }
 
     /// <summary>

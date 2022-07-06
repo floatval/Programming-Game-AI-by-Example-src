@@ -1,5 +1,4 @@
 ﻿namespace StateMachineLearn;
-using Location = ConstDefine.Location.MinerLocationType;
 
 /// <summary>
 /// 矿工接口
@@ -26,7 +25,7 @@ public interface IMiner : IBaseGameEntity
     /// <summary>
     /// 当前位置
     /// </summary>
-    public Location CurrentLocation { get; set; }
+    public ConstDefine.Location.LocationType CurrentLocation { get; set; }
 
     /// <summary>
     /// 状态机
@@ -116,7 +115,7 @@ public class Miner : BaseGameEntity, IMiner
     /// <summary>
     /// 当前位置
     /// </summary>
-    public Location CurrentLocation { get; set; } = Location.None;
+    public ConstDefine.Location.LocationType CurrentLocation { get; set; } = ConstDefine.Location.LocationType.None;
 
     /// <summary>
     /// 状态机
