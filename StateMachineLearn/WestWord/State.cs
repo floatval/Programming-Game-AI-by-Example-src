@@ -6,19 +6,27 @@ public interface IState<in TOwner> where TOwner : class
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    void Enter(TOwner owner);
+    public void Enter(TOwner owner);
 
     /// <summary>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    void Execute(TOwner owner);
+    public void Execute(TOwner owner);
 
     /// <summary>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    void Exit(TOwner owner);
+    public void Exit(TOwner owner);
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public bool OnMessage(Telegram message, Miner owner);
 }
 
 /// <summary>
@@ -50,6 +58,17 @@ public abstract class State<TOwner> : IState<TOwner> where TOwner : class
     /// <param name="owner"></param>
     public virtual void Exit(TOwner owner)
     {
+    }
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public virtual bool OnMessage(Telegram message, Miner owner)
+    {
+        return true;
     }
 
     #endregion

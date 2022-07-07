@@ -74,7 +74,7 @@ public interface IMiner : IBaseGameEntity
 /// </summary>
 public class Miner : BaseGameEntity, IMiner
 {
-    public Miner(IState<Miner> initState, IState<Miner> preState)
+    public Miner(IState<Miner> initState, IState<Miner> preState, EntityName name) : base(name)
     {
         FSM = new StateMachine<Miner>(this, initState, preState);
     }

@@ -16,17 +16,17 @@ public class StateMachine<TOwner> where TOwner: class
    /// <summary>
    /// 拥有者
    /// </summary>
-   public TOwner Owner { get; private set; }
+   private TOwner Owner { get; set; }
    
    /// <summary>
    /// 拥有者当前状态
    /// </summary>
-   public IState<TOwner> CurrentState { get; set; }
+   private IState<TOwner> CurrentState { get; set; }
    
    /// <summary>
    ///  拥有者上一个状态 
    /// </summary>
-   public IState<TOwner> PreviousState { get; set; }
+   private IState<TOwner> PreviousState { get; set; }
    
    /// <summary>
    /// 拥有者全局状态

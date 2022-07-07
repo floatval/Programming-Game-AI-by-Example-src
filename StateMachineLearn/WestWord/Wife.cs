@@ -41,12 +41,25 @@ public interface IWife : IBaseGameEntity
 /// </summary>
 public class Wife : BaseGameEntity, IWife
 {
-    public Wife(IState<Wife> initState, IState<Wife> globalState)
+    public Wife(IState<Wife> initState, IState<Wife> preState, EntityName name) : base(name)
     {
-        FSM = new StateMachine<Wife>(this,initState, globalState);
+        FSM = new StateMachine<Wife>(this,initState, preState);
     }
     
     #region Overrides of BaseGameEntity
+
+    #region Implementation of IBaseGameEntity
+
+    /// <summary>
+    /// 处理信息
+    /// </summary>
+    /// <param name="msg"></param>
+    public override void HandleMessage(Telegram msg)
+    {
+        FSM.
+    }
+
+    #endregion
 
     /// <summary>
     /// 刷新条目当前的状态 - 每帧(每次循环)调用

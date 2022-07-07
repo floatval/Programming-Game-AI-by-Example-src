@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace StateMachineLearn;
 
@@ -31,6 +30,16 @@ public class GameEntityManger
     public IBaseGameEntity? TryGetEntity(int insId)
     {
         return GameEntities.TryGetValue(insId, out var entity) ? entity : null;
+    }
+    
+    /// <summary>
+    /// 通过实例名字找实例
+    /// </summary>
+    /// <param name="entityName"></param>
+    /// <returns></returns>
+    public IBaseGameEntity? TryGetEntityByEntityName(EntityName entityName)
+    {
+        return GameEntities.Values.FirstOrDefault(entity => entity.Name == entityName);
     }
     
     #region Singleton

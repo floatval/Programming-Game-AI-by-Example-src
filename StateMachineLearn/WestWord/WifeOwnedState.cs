@@ -5,7 +5,7 @@ using Location = ConstDefine.Location.LocationType;
 /// <summary>
 /// 妻子的初始化状态
 /// </summary>
-public class WifeInitState : IState<Wife>
+public class WifeInitState : State<Wife>
 {
     #region Implementation of IState<in Wife>
 
@@ -13,7 +13,7 @@ public class WifeInitState : IState<Wife>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Wife owner)
+    public override void Enter(Wife owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -24,14 +24,14 @@ public class WifeInitState : IState<Wife>
         // 1. 将妻子放置到家里
         owner.CurrentLocation= Location.Home;
 
-        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{entity.InsId}, 初始化状态：在家里");
+        WriteExt.WriteBgWhiteAndFgYellow($"WifeId:{entity.InsId}, 初始化状态：在家里");
     }
 
     /// <summary>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Wife owner)
+    public override void Execute(Wife owner)
     {
         owner.FSM.ChangState(DoHouseWork.Instance);
     }
@@ -40,7 +40,7 @@ public class WifeInitState : IState<Wife>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Wife owner)
+    public override void Exit(Wife owner)
     {
     }
 
@@ -74,7 +74,7 @@ public class WifeInitState : IState<Wife>
 /// <summary>
 /// 去洗手间
 /// </summary>
-public class VisitBathroom : IState<Wife>
+public class VisitBathroom : State<Wife>
 {
     #region Implementation of IState<in Wife>
 
@@ -82,7 +82,7 @@ public class VisitBathroom : IState<Wife>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Wife owner)
+    public override void Enter(Wife owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -93,14 +93,14 @@ public class VisitBathroom : IState<Wife>
         // 1. 将妻子放置到家里
         owner.CurrentLocation= Location.Home;
 
-        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{entity.InsId}, 初始化状态：在家里");
+        WriteExt.WriteBgWhiteAndFgYellow($"WifeId:{entity.InsId}, 初始化状态：在家里");
     }
 
     /// <summary>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Wife owner)
+    public override void Execute(Wife owner)
     {
         owner.CurrentTirednessThreshold++;
     }
@@ -109,7 +109,7 @@ public class VisitBathroom : IState<Wife>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Wife owner)
+    public override void Exit(Wife owner)
     {
         throw new NotImplementedException();
     }
@@ -120,7 +120,7 @@ public class VisitBathroom : IState<Wife>
 /// <summary>
 /// 做家务
 /// </summary>
-public class DoHouseWork : IState<Wife>
+public class DoHouseWork :State<Wife>
 {
     #region Implementation of IState<in Wife>
 
@@ -128,7 +128,7 @@ public class DoHouseWork : IState<Wife>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Wife owner)
+    public override void Enter(Wife owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -149,7 +149,7 @@ public class DoHouseWork : IState<Wife>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Wife owner)
+    public override void Execute(Wife owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -168,7 +168,7 @@ public class DoHouseWork : IState<Wife>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Wife owner)
+    public override void Exit(Wife owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -211,7 +211,7 @@ public class DoHouseWork : IState<Wife>
 /// <summary>
 /// 妻子的全局状态
 /// </summary>
-public class WifeGlobalState : IState<Wife>
+public class WifeGlobalState :State<Wife>
 {
     #region Implementation of IState<in Wife>
 
@@ -219,7 +219,7 @@ public class WifeGlobalState : IState<Wife>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Wife owner)
+    public override void Enter(Wife owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -233,16 +233,32 @@ public class WifeGlobalState : IState<Wife>
             
             owner.CurrentLocation= Location.BathRoom;
         }
+        
+        // 2. 1/2 的概率来进入煮肉状态
+        var random = new Random();
+        int result = random.Next(0, 10);
+        if (result % 2 == 0)
+        {
+            owner.FSM.ChangState(CookStew.Instance);
+        }
 
-        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{entity.InsId}, 全局状态");
+        WriteExt.WriteBgWhiteAndFgYellow($"wifeId:{entity.InsId}, 全局状态");
     }
 
     /// <summary>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Wife owner)
+    public override void Execute(Wife owner)
     {
+        // 2. 1/2 的概率来进入煮肉状态
+        var random = new Random();
+        int result = random.Next(0, 10);
+        if (result % 2 == 0)
+        {
+            owner.FSM.ChangState(CookStew.Instance);
+        }
+        
         if (!owner.IsNeedToGoBathroom())
         {
             return;
@@ -255,16 +271,16 @@ public class WifeGlobalState : IState<Wife>
         owner.FSM.RevertToPreviousState();
         
         // 3. 打日志
-        WriteExt.WriteBgWhiteAndFgBlue($"entryId{owner.InsId}, 全局状态解决完毕，切换状态到进入全局状态前的状态");
+        WriteExt.WriteBgWhiteAndFgBlue($"WifeId:{owner.InsId}, 全局状态解决完毕，切换状态到进入全局状态前的状态");
     }
 
     /// <summary>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Wife owner)
+    public override void Exit(Wife owner)
     {
-        WriteExt.WriteBgWhiteAndFgRed($"entryId{owner.InsId}, 退出全局状态");
+        WriteExt.WriteBgWhiteAndFgRed($"WifeId:{owner.InsId}, 退出全局状态");
     }
 
     #endregion
@@ -289,6 +305,107 @@ public class WifeGlobalState : IState<Wife>
             }
             
             return m_instance;
+        }
+    }
+
+    #endregion
+}
+
+/// <summary>
+/// 煮肉的状态
+/// </summary>
+public class CookStew : State<Wife>
+{
+    private CookStew()
+    {
+        m_stew = this;
+    }
+
+    #region Overrides of State<Wife>
+
+    /// <summary>
+    /// 进入状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Enter(Wife owner)
+    {
+        if(owner.CurrentLocation!= Location.Kitchen)
+        {
+            owner.CurrentLocation = Location.Kitchen;
+        }
+        
+        WriteExt.WriteBgWhiteAndFgYellow($"wifeId:{owner.InsId}, 进入煮肉的状态");
+    }
+
+    /// <summary>
+    ///  运行状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Execute(Wife owner)
+    {
+        // 1. 发送煮肉完成的消息给矿工
+        MessageDispatcher.Instance.DispatchMessage(owner.Name, EntityName.EntityElsa,
+            ConstDefine.MessageType.StewReady, 0.0001, null);
+        
+        WriteExt.WriteBgWhiteAndFgBlue($"wifeId:{owner.InsId}, 正在煮肉");    
+    }
+
+    /// <summary>
+    /// 退出状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Exit(Wife owner)
+    {
+        WriteExt.WriteBgWhiteAndFgRed($"wifeId:{owner.InsId}, 退出煮肉的状态");
+    }
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(Telegram message, Miner owner)
+    {
+        switch (message.MessageType)
+        {
+            // 1. 煮肉完成通知矿工
+            case ConstDefine.MessageType.StewReady:
+            {
+                WriteExt.WriteBgWhiteAndFgRed($"wifeId:{owner.InsId}, 收到煮肉完成的消息");
+                MessageDispatcher.Instance.DispatchMessage(owner.Name, EntityName.EntityMinerBob,
+                    ConstDefine.MessageType.StewReady, 0, null);
+                return true;
+            }
+            case ConstDefine.MessageType.HiHoneyImHome:
+            default:
+                return false;
+        }
+    }
+
+    #endregion
+
+
+    #region Singleton
+
+    /// <summary>
+    /// 对象引用
+    /// </summary>
+    private static CookStew? m_stew;
+
+    /// <summary>
+    /// 缓存
+    /// </summary>
+    public static CookStew Instance
+    {
+        get
+        {
+            if (m_stew == null)
+            {
+                m_stew = new CookStew();
+            }
+            
+            return m_stew;
         }
     }
 

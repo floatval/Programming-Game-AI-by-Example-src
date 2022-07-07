@@ -65,7 +65,12 @@ public static class ConstDefine
             /// <summary>
             /// 客厅
             /// </summary>
-            LivingRoom
+            LivingRoom,
+            
+            /// <summary>
+            /// 厨房
+            /// </summary>
+            Kitchen,
         }
     }
     
@@ -102,4 +107,21 @@ public static class ConstDefine
             QuenchThirst
         }
     }
+
+    /// <summary>
+    /// 消息类型
+    /// </summary>
+    public enum MessageType
+    {
+        /// <summary>
+        /// 宝，我回来了
+        /// </summary>
+        HiHoneyImHome,
+        
+        /// <summary>
+        /// 炖肉好了，准备开恰⑧
+        /// </summary>
+        StewReady
+    }
+
 }

@@ -1,4 +1,7 @@
-﻿namespace StateMachineLearn;
+﻿using System.Diagnostics;
+using System.Globalization;
+
+namespace StateMachineLearn;
 using Behavior = ConstDefine.MinerBehavior;
 using Location = ConstDefine.Location;
 using EntityManger = GameEntityManger;
@@ -9,7 +12,7 @@ using EntityManger = GameEntityManger;
  * 负责状态的切换（进入状态、退出状态）由矿工对象的 Update 处理
  */
 
-public sealed class InitState : IState<Miner>
+public sealed class InitState : State<Miner>
 {
     #region Implementation of IState<in Miner>
 
@@ -17,7 +20,7 @@ public sealed class InitState : IState<Miner>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Miner owner)
+    public override void Enter(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -35,7 +38,7 @@ public sealed class InitState : IState<Miner>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Miner owner)
+    public override void Execute(Miner owner)
     {
         owner.FSM.ChangState(new EnterMineAndDigForNuggetState()); 
     }
@@ -44,7 +47,7 @@ public sealed class InitState : IState<Miner>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Miner owner)
+    public override void Exit(Miner owner)
     {
     }
 
@@ -54,7 +57,7 @@ public sealed class InitState : IState<Miner>
 /// <summary>
 /// 进入金矿挖矿的状态
 /// </summary>
-public sealed class EnterMineAndDigForNuggetState : IState<Miner>
+public sealed class EnterMineAndDigForNuggetState : State<Miner>
 {
     #region Overrides of MinerState
 
@@ -62,7 +65,7 @@ public sealed class EnterMineAndDigForNuggetState : IState<Miner>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Miner owner)
+    public override void Enter(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -85,7 +88,7 @@ public sealed class EnterMineAndDigForNuggetState : IState<Miner>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Miner owner)
+    public override void Execute(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -127,7 +130,7 @@ public sealed class EnterMineAndDigForNuggetState : IState<Miner>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Miner owner)
+    public override void Exit(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -147,7 +150,6 @@ public sealed class EnterMineAndDigForNuggetState : IState<Miner>
     /// <summary>
     /// 获取实例
     /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
     public static EnterMineAndDigForNuggetState Instance
     {
         get
@@ -168,7 +170,7 @@ public sealed class EnterMineAndDigForNuggetState : IState<Miner>
 /// <summary>
 /// 去银行存钱的状态
 /// </summary>
-public sealed class VisitBankAndDepositGoldState : IState<Miner>
+public sealed class VisitBankAndDepositGoldState :State<Miner>
 {
     #region Overrides of MinerState
 
@@ -176,7 +178,7 @@ public sealed class VisitBankAndDepositGoldState : IState<Miner>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Miner owner)
+    public override void Enter(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -198,7 +200,7 @@ public sealed class VisitBankAndDepositGoldState : IState<Miner>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Miner owner)
+    public override void Execute(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -231,7 +233,7 @@ public sealed class VisitBankAndDepositGoldState : IState<Miner>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Miner owner)
+    public override void Exit(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -274,7 +276,7 @@ public sealed class VisitBankAndDepositGoldState : IState<Miner>
 /// <summary>
 /// 回家休息的状态
 /// </summary>
-public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
+public sealed class GoHomeAndSleepTilRestedState :State<Miner>
 {
     private GoHomeAndSleepTilRestedState()
     {
@@ -287,7 +289,7 @@ public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Miner owner)
+    public override void Enter(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -309,13 +311,17 @@ public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Miner owner)
+    public override void Execute(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
         {
             return;
         }
+
+        // 0. 发送回家的通知
+        MessageDispatcher.Instance.DispatchMessage(owner.Name, EntityName.EntityElsa,
+            ConstDefine.MessageType.HiHoneyImHome, 0, null); // todo:解决硬编码问题
         
         owner.CurrentTirednessThreshold--;
         WriteExt.WriteBgWhiteAndFgBlue($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，在家里休息中");
@@ -337,7 +343,7 @@ public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Miner owner)
+    public override void Exit(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -348,6 +354,33 @@ public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
         WriteExt.WriteBgWhiteAndFgRed($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，休息好了");
         Console.WriteLine('\n');
     }
+
+    #region Overrides of State<Miner>
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(Telegram message, Miner owner)
+    {
+        switch (message.MessageType)
+        {
+            // 1. 处理吃饭
+            case ConstDefine.MessageType.StewReady:
+            {
+                WriteExt.WriteBgWhiteAndFgRed($"minderId:{owner.InsId}, 收到肉煮好的消息");
+                owner.FSM.ChangState(EatStew.Instance);
+                return true;
+            }
+            case ConstDefine.MessageType.HiHoneyImHome:
+            default:
+                return false;
+        }
+    }
+
+    #endregion
 
     #endregion
 
@@ -381,7 +414,7 @@ public sealed class GoHomeAndSleepTilRestedState : IState<Miner>
 /// <summary>
 /// 解决口渴的状态
 /// </summary>
-public class QuenchThirstState : IState<Miner>
+public class QuenchThirstState :State<Miner>
 {
     private QuenchThirstState()
     {
@@ -394,7 +427,7 @@ public class QuenchThirstState : IState<Miner>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Miner owner)
+    public override void Enter(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -416,7 +449,7 @@ public class QuenchThirstState : IState<Miner>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Miner owner)
+    public override void Execute(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -438,7 +471,7 @@ public class QuenchThirstState : IState<Miner>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Miner owner)
+    public override void Exit(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -478,7 +511,10 @@ public class QuenchThirstState : IState<Miner>
     #endregion
 }
 
-public class MinerGlobalState : IState<Miner>
+/// <summary>
+/// 矿工全局状态
+/// </summary>
+public class MinerGlobalState : State<Miner>
 {
     #region Implementation of IState<in Miner>
 
@@ -486,7 +522,7 @@ public class MinerGlobalState : IState<Miner>
     /// 进入状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Enter(Miner owner)
+    public override void Enter(Miner owner)
     {
         var entity = EntityManger.Instance.TryGetEntity(owner.InsId);
         if(entity == null)
@@ -508,7 +544,7 @@ public class MinerGlobalState : IState<Miner>
     ///  运行状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Execute(Miner owner)
+    public override void Execute(Miner owner)
     {
         throw new NotImplementedException();
     }
@@ -517,9 +553,95 @@ public class MinerGlobalState : IState<Miner>
     /// 退出状态处理流程
     /// </summary>
     /// <param name="owner"></param>
-    public void Exit(Miner owner)
+    public override void Exit(Miner owner)
     {
         throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(Telegram message, Miner owner)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+}
+
+/// <summary>
+/// 矿工吃炖肉的状态
+/// </summary>
+public sealed class EatStew : State<Miner>
+{
+    /// <summary>
+    /// 单例防止外部创建该对象
+    /// </summary>
+    private EatStew()
+    {
+        m_stew = this;
+    }
+    
+    #region Overrides of State<Miner>
+
+    /// <summary>
+    /// 进入状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Enter(Miner owner)
+    {
+        // 1. 只有在家的时候，才能进入这个状态，从其他地方进入这个状态是不可能的
+        Debug.Assert(owner.CurrentLocation == Location.LocationType.Home,
+            $"owner.CurrentLocation not is Location.LocationType.Home minerId{owner.InsId}");
+        
+        WriteExt.WriteBgWhiteAndFgYellow($"minerId:{owner.InsId}, enter EatStew state");
+    }
+
+    /// <summary>
+    ///  运行状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Execute(Miner owner)
+    {
+        // 随便做一个缓存状态方便测试
+        owner.CurrentTirednessThreshold = 1;
+
+        // 1. 返回之前的状态
+        owner.FSM.RevertToPreviousState();
+        
+        WriteExt.WriteBgWhiteAndFgBlue($"minerId{owner.InsId}, enter eat stew state");
+    }
+
+    /// <summary>
+    /// 退出状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Exit(Miner owner)
+    {
+        base.Exit(owner);
+        WriteExt.WriteBgWhiteAndFgRed($"minerId{owner.InsId}, exit eat stew state");
+    }
+
+    #endregion
+
+    #region Singleton
+
+    private static EatStew? m_stew;
+
+    public static EatStew Instance
+    {
+        get
+        {
+            if (m_stew == null)
+            {
+                m_stew = new EatStew();
+            }
+
+            return m_stew;
+        }
     }
 
     #endregion

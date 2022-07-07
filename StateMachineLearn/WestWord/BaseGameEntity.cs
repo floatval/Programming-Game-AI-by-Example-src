@@ -11,6 +11,17 @@ public interface IBaseGameEntity
     /// 实例 Id
     /// </summary>
     public int InsId { get; }
+    
+    /// <summary>
+    /// 实例名字
+    /// </summary>
+    public EntityName Name { get; }
+    
+    /// <summary>
+    /// 处理信息
+    /// </summary>
+    /// <param name="msg"></param>
+    public void HandleMessage(Telegram msg);
 }
 
 /// <summary>
@@ -21,16 +32,30 @@ public class BaseGameEntity : IBaseGameEntity
     /// <summary>
     /// 防止外部绕过 Builder 创建对象
     /// </summary>
-    protected BaseGameEntity()
+    protected BaseGameEntity(EntityName name)
     {
         InsId = NextValidId;
         ++NextValidId;
+        Name = name;
     }
 
     /// <summary>
     /// 当前对象的实例 Id
     /// </summary>
     public int InsId { get; private set; }
+
+    /// <summary>
+    /// 实例名字
+    /// </summary>
+    public EntityName Name { get; private set; }
+
+    /// <summary>
+    /// 处理信息
+    /// </summary>
+    /// <param name="msg"></param>
+    public virtual void HandleMessage(Telegram msg)
+    {
+    }
 
     /// <summary>
     /// 生成对象序列中，下一个对象的有效 Id
