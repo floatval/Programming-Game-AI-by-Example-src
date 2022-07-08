@@ -4,6 +4,7 @@ public enum EntityName
 {
     EntityMinerBob,
     EntityElsa,
+    EntityFly,
 }
 
 public static class EnumExtensions
@@ -14,6 +15,7 @@ public static class EnumExtensions
         {
             EntityName.EntityMinerBob => "Miner Bob",
             EntityName.EntityElsa => "Elsa",
+            EntityName.EntityFly => "Fly",
             _ => "Unknown"
         };
     }

@@ -12,13 +12,20 @@ var wife = new Wife(new WifeInitState(), new WifeInitState(), EntityName.EntityE
     }
 };
 
+var fly = new Fly(EntityName.EntityFly, FlyGlobalState.Instance, FlyGlobalState.Instance)
+{
+    FSM = { GlobalState = FlyGlobalState.Instance }
+};
+
 GameEntityManger.Instance.TryAddNewEntity(miner);
 GameEntityManger.Instance.TryAddNewEntity(wife);
+GameEntityManger.Instance.TryAddNewEntity(fly);
 
 var gameEntities = new List<BaseGameEntity>
 {
     miner,
-    wife
+    wife,
+    fly
 };
 
 

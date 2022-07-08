@@ -121,7 +121,27 @@ public static class ConstDefine
         /// <summary>
         /// 炖肉好了，准备开恰⑧
         /// </summary>
-        StewReady
+        StewReady,
+        
+        /// <summary>
+        /// 苍蝇，老子现在在酒馆！
+        /// </summary>
+        FlyImSaloon,
+        
+        /// <summary>
+        /// 矿工，你洗干净脖子吧
+        /// </summary>
+        MinerImFlyAttackU,
+        
+        /// <summary>
+        /// 小样，就凭你？
+        /// </summary>
+        FlyBeAttacked,
+        
+        /// <summary>
+        /// 大爷，放过小人吧
+        /// </summary>
+        FlySurrender,
     }
 
 }

@@ -445,6 +445,10 @@ public class QuenchThirstState :State<Miner>
         }
         owner.CurrentLocation = Location.LocationType.Saloon;
         
+        // 2. 发消息给苍蝇
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityFly, owner.Name,
+            ConstDefine.MessageType.FlyImSaloon, 0, null);
+        
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, QuenchThirstState，进入酒吧");
     }
 
@@ -510,7 +514,31 @@ public class QuenchThirstState :State<Miner>
             return m_instance;
         }
     }
-    
+
+    #region Overrides of State<Miner>
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(in Telegram message, Miner owner)
+    {
+        // 1. 没有苍蝇过来攻击，继续吃饭
+        if (message.MessageType != ConstDefine.MessageType.MinerImFlyAttackU)
+        {
+            return false;
+        }
+        
+        // 2. 有苍蝇过来攻击了，进行处理
+        owner.FSM.ChangState(BeingHarassed.Instance);
+
+        return true;
+    }
+
+    #endregion
+
     #endregion
 }
 
@@ -644,6 +672,139 @@ public sealed class EatStew : State<Miner>
             }
 
             return m_stew;
+        }
+    }
+
+    #endregion
+}
+
+/// <summary>
+/// 被骚扰的状态
+/// </summary>
+public sealed class BeingHarassed : State<Miner>
+{
+    private BeingHarassed()
+    {
+        m_instance = this;
+    }
+
+    #region Overrides of State<Miner>
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(in Telegram message, Miner owner)
+    {
+        // 0. 前置条件不满足
+        if (message.MessageType != ConstDefine.MessageType.MinerImFlyAttackU)
+        {
+            return false;
+        }
+        
+        // 1. 转换到攻击状态
+        WriteExt.WriteBgWhiteAndFgRed($"minerId{owner.InsId}, 被骚扰，转换到攻击状态");
+        owner.FSM.ChangState(AttackFlyState.Instance);
+        return true;
+    }
+
+    #endregion
+
+    #region Singleton
+
+    /// <summary>
+    /// 对象缓存
+    /// </summary>
+    private static BeingHarassed? m_instance;
+    
+    /// <summary>
+    /// 对象接口
+    /// </summary>
+    public static BeingHarassed Instance
+    {
+        get
+        {
+            if (m_instance == null)
+            {
+                m_instance = new BeingHarassed();
+            }
+
+            return m_instance;
+        }
+    }
+    
+    #endregion 
+}
+
+/// <summary>
+/// 攻击苍蝇的状态
+/// </summary>
+public sealed class AttackFlyState : State<Miner>
+{
+    private AttackFlyState()
+    {
+        m_instance = this;
+    }
+    
+    #region Singleton
+    
+    /// <summary>
+    /// 对象缓存
+    /// </summary>
+    private static AttackFlyState? m_instance;
+
+    #region Overrides of State<Miner>
+
+    /// <summary>
+    /// 进入状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Enter(Miner owner)
+    {
+        // 1. 发消息给苍蝇
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityFly, EntityName.EntityMinerBob,
+            ConstDefine.MessageType.FlyBeAttacked, 0, null);
+        
+        // 2. 打日志
+        WriteExt.WriteBgWhiteAndFgYellow($"minerId{owner.InsId}, enter attack fly state");
+    }
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(in Telegram message, Miner owner)
+    {
+        if(message.MessageType != ConstDefine.MessageType.FlySurrender)
+        {
+            return false;
+        }
+        
+        // 1. 苍蝇投降了回到之前的状态
+        owner.FSM.ChangState(QuenchThirstState.Instance);
+        WriteExt.WriteBgWhiteAndFgRed($"minerId{owner.InsId}, 苍蝇投降了，回到之前的状态");
+        return true;
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 对象数据接口
+    /// </summary>
+    public static AttackFlyState Instance
+    {
+        get
+        {
+            if (m_instance == null)
+            {
+                m_instance = new AttackFlyState();
+            }
+            
+            return m_instance;
         }
     }
 
