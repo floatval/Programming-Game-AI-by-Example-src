@@ -91,5 +91,22 @@ public class StateMachine<TOwner> where TOwner: class
    {
       return ReferenceEquals(CurrentState, state);
    }
+
+   /// <summary>
+   /// 处理消息
+   /// </summary>
+   /// <param name="msg"></param>
+   /// <returns></returns>
+   public bool HandleMessage(in Telegram msg)
+   {
+      // 1. 查看当前状态是否有效并且可以处理消息
+      if(CurrentState.OnMessage(in msg, Owner))
+      {
+         return true;
+      }
+      
+      // 2. 全局状态是否可以处理消息
+      return GlobalState?.OnMessage(in msg, Owner) ?? false;
+   }
    
 }

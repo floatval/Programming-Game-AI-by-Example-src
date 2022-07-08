@@ -82,6 +82,15 @@ public class Miner : BaseGameEntity, IMiner
     #region 覆写
 
     /// <summary>
+    /// 处理信息
+    /// </summary>
+    /// <param name="msg"></param>
+    public override void HandleMessage(in Telegram msg)
+    {
+        FSM.HandleMessage(in msg);
+    }
+
+    /// <summary>
     /// 刷新条目当前的状态 - 每帧(每次循环)调用
     /// </summary>
     public override void Update()

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
 
 namespace StateMachineLearn;
 using Behavior = ConstDefine.MinerBehavior;
@@ -303,8 +302,12 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
             return;
         }
         owner.CurrentLocation = Location.LocationType.Home;
+
+        // 2. 通知妻子自己回家了
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityElsa, owner.Name,
+            ConstDefine.MessageType.HiHoneyImHome, 0, null);
         
-        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，回到家里");
+        WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，回到家里，并告知妻子自己回来了");
     }
 
     /// <summary>
@@ -363,7 +366,7 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
     /// <param name="message"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    public override bool OnMessage(Telegram message, Miner owner)
+    public override bool OnMessage(in Telegram message, Miner owner)
     {
         switch (message.MessageType)
         {
@@ -564,7 +567,7 @@ public class MinerGlobalState : State<Miner>
     /// <param name="message"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    public override bool OnMessage(Telegram message, Miner owner)
+    public override bool OnMessage(in Telegram message, Miner owner)
     {
         throw new NotImplementedException();
     }

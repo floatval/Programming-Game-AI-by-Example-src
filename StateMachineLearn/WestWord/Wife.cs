@@ -23,6 +23,11 @@ public interface IWife : IBaseGameEntity
     /// </summary>
     public StateMachine<Wife> FSM { get; set; }
     
+    /// <summary>
+    /// 是否在烹饪
+    /// </summary>
+    bool IsInCooking { get; set; }
+    
     #endregion
 
     #region 方法成员
@@ -54,9 +59,9 @@ public class Wife : BaseGameEntity, IWife
     /// 处理信息
     /// </summary>
     /// <param name="msg"></param>
-    public override void HandleMessage(Telegram msg)
+    public override void HandleMessage(in Telegram msg)
     {
-        FSM.
+        FSM.HandleMessage(in msg);
     }
 
     #endregion
@@ -89,6 +94,11 @@ public class Wife : BaseGameEntity, IWife
     /// 状态机
     /// </summary>
     public StateMachine<Wife> FSM { get; set; }
+
+    /// <summary>
+    /// 是否在烹饪
+    /// </summary>
+    public bool IsInCooking { get; set; }
 
     /// <summary>
     /// 是否需要去洗手间

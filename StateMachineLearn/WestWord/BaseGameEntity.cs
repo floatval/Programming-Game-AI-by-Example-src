@@ -16,12 +16,12 @@ public interface IBaseGameEntity
     /// 实例名字
     /// </summary>
     public EntityName Name { get; }
-    
+
     /// <summary>
     /// 处理信息
     /// </summary>
     /// <param name="msg"></param>
-    public void HandleMessage(Telegram msg);
+    public void HandleMessage(in Telegram msg);
 }
 
 /// <summary>
@@ -53,7 +53,7 @@ public class BaseGameEntity : IBaseGameEntity
     /// 处理信息
     /// </summary>
     /// <param name="msg"></param>
-    public virtual void HandleMessage(Telegram msg)
+    public virtual void HandleMessage(in Telegram msg)
     {
     }
 

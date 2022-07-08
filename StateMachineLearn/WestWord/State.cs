@@ -26,7 +26,7 @@ public interface IState<in TOwner> where TOwner : class
     /// <param name="message"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    public bool OnMessage(Telegram message, Miner owner);
+    public bool OnMessage(in Telegram message, TOwner owner);
 }
 
 /// <summary>
@@ -66,9 +66,9 @@ public abstract class State<TOwner> : IState<TOwner> where TOwner : class
     /// <param name="message"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    public virtual bool OnMessage(Telegram message, Miner owner)
+    public virtual bool OnMessage(in Telegram message, TOwner owner)
     {
-        return true;
+        return false;
     }
 
     #endregion

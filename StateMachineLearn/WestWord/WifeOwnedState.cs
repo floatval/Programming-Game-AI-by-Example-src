@@ -227,21 +227,6 @@ public class WifeGlobalState :State<Wife>
             return;
         }
         
-        // 1. 将妻子放置到洗手间
-        if (owner.CurrentLocation != Location.BathRoom)
-        {
-            
-            owner.CurrentLocation= Location.BathRoom;
-        }
-        
-        // 2. 1/2 的概率来进入煮肉状态
-        var random = new Random();
-        int result = random.Next(0, 10);
-        if (result % 2 == 0)
-        {
-            owner.FSM.ChangState(CookStew.Instance);
-        }
-
         WriteExt.WriteBgWhiteAndFgYellow($"wifeId:{entity.InsId}, 全局状态");
     }
 
@@ -251,27 +236,6 @@ public class WifeGlobalState :State<Wife>
     /// <param name="owner"></param>
     public override void Execute(Wife owner)
     {
-        // 2. 1/2 的概率来进入煮肉状态
-        var random = new Random();
-        int result = random.Next(0, 10);
-        if (result % 2 == 0)
-        {
-            owner.FSM.ChangState(CookStew.Instance);
-        }
-        
-        if (!owner.IsNeedToGoBathroom())
-        {
-            return;
-        }
-        
-        // 1. 情况妻子的疲劳度
-        owner.CurrentTirednessThreshold = 0;
-        
-        // 2. 回到进入全局状态前的状态
-        owner.FSM.RevertToPreviousState();
-        
-        // 3. 打日志
-        WriteExt.WriteBgWhiteAndFgBlue($"WifeId:{owner.InsId}, 全局状态解决完毕，切换状态到进入全局状态前的状态");
     }
 
     /// <summary>
@@ -308,6 +272,33 @@ public class WifeGlobalState :State<Wife>
         }
     }
 
+    #region Overrides of State<Wife>
+
+    /// <summary>
+    /// 处理消息
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    public override bool OnMessage(in Telegram message, Wife owner)
+    {
+        // 1. 不是矿工回家的消息
+        if (message.MessageType != ConstDefine.MessageType.HiHoneyImHome)
+        {
+            return false;
+        }
+
+        WriteExt.WriteBgWhiteAndFgYellow($"WifeId:{owner.InsId}, 收到消息，开始进入全局状态");
+        
+        // 2. 更改状态到烹饪
+        owner.FSM.ChangState(CookStew.Instance);
+        
+        return true;
+
+    }
+
+    #endregion
+
     #endregion
 }
 
@@ -329,10 +320,20 @@ public class CookStew : State<Wife>
     /// <param name="owner"></param>
     public override void Enter(Wife owner)
     {
+        // 1. 检查当前状态
         if(owner.CurrentLocation!= Location.Kitchen)
         {
             owner.CurrentLocation = Location.Kitchen;
         }
+
+        // 2. 检查是否处于烹饪状态
+        if (owner.IsInCooking)
+        {
+            return;
+        }
+        
+        // 3. 设置当前处于烹饪状态
+        owner.IsInCooking = true;
         
         WriteExt.WriteBgWhiteAndFgYellow($"wifeId:{owner.InsId}, 进入煮肉的状态");
     }
@@ -343,9 +344,9 @@ public class CookStew : State<Wife>
     /// <param name="owner"></param>
     public override void Execute(Wife owner)
     {
-        // 1. 发送煮肉完成的消息给矿工
+        // 1. 开始烹饪，并在烹饪好的时候提醒自己
         MessageDispatcher.Instance.DispatchMessage(owner.Name, EntityName.EntityElsa,
-            ConstDefine.MessageType.StewReady, 0.0001, null);
+            ConstDefine.MessageType.StewReady, 0.01, null);
         
         WriteExt.WriteBgWhiteAndFgBlue($"wifeId:{owner.InsId}, 正在煮肉");    
     }
@@ -365,7 +366,7 @@ public class CookStew : State<Wife>
     /// <param name="message"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    public override bool OnMessage(Telegram message, Miner owner)
+    public override bool OnMessage(in Telegram message, Wife owner)
     {
         switch (message.MessageType)
         {
@@ -373,8 +374,10 @@ public class CookStew : State<Wife>
             case ConstDefine.MessageType.StewReady:
             {
                 WriteExt.WriteBgWhiteAndFgRed($"wifeId:{owner.InsId}, 收到煮肉完成的消息");
-                MessageDispatcher.Instance.DispatchMessage(owner.Name, EntityName.EntityMinerBob,
+                MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, owner.Name,
                     ConstDefine.MessageType.StewReady, 0, null);
+                owner.IsInCooking = false;
+                owner.FSM.ChangState(DoHouseWork.Instance); 
                 return true;
             }
             case ConstDefine.MessageType.HiHoneyImHome:

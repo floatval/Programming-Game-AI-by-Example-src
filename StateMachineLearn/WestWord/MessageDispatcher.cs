@@ -73,7 +73,7 @@ public class MessageDispatcher : IMessageDispatcher
             .Build();
         
         // 4. 发送消息
-        receiver!.HandleMessage(message);
+        receiver!.HandleMessage(in message);
         
         return true;
     }
@@ -110,7 +110,7 @@ public class MessageDispatcher : IMessageDispatcher
         }
         
         // 5. 发送消息
-        receiver.HandleMessage(message);
+        receiver.HandleMessage(in message);
         
         return true;
     }
@@ -243,7 +243,7 @@ public class MessageDispatcher : IMessageDispatcher
         var receiver = EntityManger.TryGetEntity(message.ReceiverInsId);
         
         // 2. 派发消息
-        receiver!.HandleMessage(message);
+        receiver!.HandleMessage(in message);
     }
     
     #endregion
