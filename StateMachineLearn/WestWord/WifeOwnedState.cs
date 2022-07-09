@@ -76,6 +76,10 @@ public class WifeInitState : State<Wife>
 /// </summary>
 public class VisitBathroom : State<Wife>
 {
+    private VisitBathroom()
+    {
+    }
+    
     #region Implementation of IState<in Wife>
 
     /// <summary>
@@ -91,7 +95,7 @@ public class VisitBathroom : State<Wife>
         }
         
         // 1. 将妻子放置到家里
-        owner.CurrentLocation= Location.Home;
+        owner.CurrentLocation= Location.BathRoom;
 
         WriteExt.WriteBgWhiteAndFgYellow($"WifeId:{entity.InsId}, 初始化状态：在家里");
     }
@@ -102,7 +106,14 @@ public class VisitBathroom : State<Wife>
     /// <param name="owner"></param>
     public override void Execute(Wife owner)
     {
-        owner.CurrentTirednessThreshold++;
+        // 1. 清空基类的疲劳度
+        owner.CurrentTirednessThreshold = 0;
+        
+        // 2. 反转回以前的状态
+        owner.FSM.RevertToPreviousState();
+        
+        // 3. 打日志
+        WriteExt.WriteBgWhiteAndFgYellow($"WifeId:{owner.InsId}, 去洗手间");
     }
 
     /// <summary>
@@ -111,9 +122,33 @@ public class VisitBathroom : State<Wife>
     /// <param name="owner"></param>
     public override void Exit(Wife owner)
     {
-        throw new NotImplementedException();
+        WriteExt.WriteBgWhiteAndFgRed($"wifeId{owner.InsId} 退出去洗手间");
     }
 
+    #endregion
+
+    #region Singleton
+
+    /// <summary>
+    /// 对象缓存
+    /// </summary>
+    private static VisitBathroom? m_instance;
+    
+    /// <summary>
+    /// 对象获取接口
+    /// </summary>
+    public static VisitBathroom Instance
+    {
+        get
+        {
+            if (m_instance == null)
+            {
+                m_instance = new VisitBathroom();
+            }
+            return m_instance;
+        }
+    }
+    
     #endregion
 }
 
@@ -213,6 +248,11 @@ public class DoHouseWork :State<Wife>
 /// </summary>
 public class WifeGlobalState :State<Wife>
 {
+    private WifeGlobalState()
+    {
+        m_instance = this;
+    }
+    
     #region Implementation of IState<in Wife>
 
     /// <summary>
@@ -236,6 +276,14 @@ public class WifeGlobalState :State<Wife>
     /// <param name="owner"></param>
     public override void Execute(Wife owner)
     {
+        // 1. 检查是否需要切换状态
+        if (owner.IsNeedToGoBathroom())
+        {
+            owner.FSM.ChangeState(VisitBathroom.Instance);
+        }
+        
+        // 2. 打日志
+        WriteExt.WriteBgWhiteAndFgBlue($"WifeId:{owner.InsId}, 全局状态");
     }
 
     /// <summary>

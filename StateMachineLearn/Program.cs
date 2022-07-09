@@ -8,7 +8,7 @@ var wife = new Wife(new WifeInitState(), new WifeInitState(), EntityName.EntityE
 {
     FSM =
     {
-        GlobalState = new WifeGlobalState()
+        GlobalState = WifeGlobalState.Instance
     }
 };
 

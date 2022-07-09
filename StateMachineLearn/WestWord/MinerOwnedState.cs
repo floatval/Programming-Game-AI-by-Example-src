@@ -303,13 +303,9 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
         }
         owner.CurrentLocation = Location.LocationType.Home;
 
-        /*
-         错误的处理方式!!,不应该在 Enter 的时候去发消息,让其他关联对象改变状态,
-         如果 Enter 的时候发消息了,会造成,一个 Update (逻辑帧) 里面处理多个状态的迁移,而应该在 Execute 里面进行处理
         // 2. 通知妻子自己回家了
         MessageDispatcher.Instance.DispatchMessage(EntityName.EntityElsa, owner.Name,
             ConstDefine.MessageType.HiHoneyImHome, 0, null);
-        */
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，回到家里，并告知妻子自己回来了");
     }
@@ -326,10 +322,6 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
             return;
         }
 
-        // 0. 发送回家的通知
-        MessageDispatcher.Instance.DispatchMessage(owner.Name, EntityName.EntityElsa,
-            ConstDefine.MessageType.HiHoneyImHome, 0, null); // todo:解决硬编码问题
-        
         owner.CurrentTirednessThreshold--;
         WriteExt.WriteBgWhiteAndFgBlue($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，在家里休息中");
         
@@ -377,7 +369,7 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
             // 1. 处理吃饭
             case ConstDefine.MessageType.StewReady:
             {
-                WriteExt.WriteBgWhiteAndFgRed($"minderId:{owner.InsId}, 收到肉煮好的消息");
+                WriteExt.WriteBgWhiteAndFgRed($"minderId:{owner.InsId}, 开始在家里吃肉");
                 owner.FSM.ChangeState(EatStew.Instance);
                 return true;
             }

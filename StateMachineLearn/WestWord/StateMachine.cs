@@ -79,7 +79,8 @@ public class StateMachine<TOwner> where TOwner: class
    /// <returns></returns>
    public bool RevertToPreviousState()
    {
-      return ChangeState(PreviousState);
+      // 1. 之前的状态与当前状态不一样,则进行状态反转,并返回true
+      return !IsInState(PreviousState) && ChangeState(PreviousState);
    }
    
    /// <summary>
