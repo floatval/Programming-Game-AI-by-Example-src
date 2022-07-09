@@ -33,7 +33,7 @@ public class WifeInitState : State<Wife>
     /// <param name="owner"></param>
     public override void Execute(Wife owner)
     {
-        owner.FSM.ChangState(DoHouseWork.Instance);
+        owner.FSM.ChangeState(DoHouseWork.Instance);
     }
 
     /// <summary>
@@ -291,7 +291,7 @@ public class WifeGlobalState :State<Wife>
         WriteExt.WriteBgWhiteAndFgYellow($"WifeId:{owner.InsId}, 收到消息，开始进入全局状态");
         
         // 2. 更改状态到烹饪
-        owner.FSM.ChangState(CookStew.Instance);
+        owner.FSM.ChangeState(CookStew.Instance);
         
         return true;
 
@@ -377,7 +377,7 @@ public class CookStew : State<Wife>
                 MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, owner.Name,
                     ConstDefine.MessageType.StewReady, 0, null);
                 owner.IsInCooking = false;
-                owner.FSM.ChangState(DoHouseWork.Instance); 
+                owner.FSM.ChangeState(DoHouseWork.Instance); 
                 return true;
             }
             case ConstDefine.MessageType.HiHoneyImHome:

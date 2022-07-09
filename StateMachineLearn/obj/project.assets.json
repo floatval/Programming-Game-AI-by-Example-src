@@ -8,26 +8,24 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\wangtengfei\\.nuget\\packages\\": {}
+    "C:\\Users\\yi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\GameLearn\\StateMachineLearn\\StateMachineLearn.csproj",
+      "projectUniqueName": "C:\\Users\\yi\\Documents\\github\\ProgrammingGameAiByExampleSrc-C-\\StateMachineLearn\\StateMachineLearn.csproj",
       "projectName": "StateMachineLearn",
-      "projectPath": "D:\\GameLearn\\StateMachineLearn\\StateMachineLearn.csproj",
-      "packagesPath": "C:\\Users\\wangtengfei\\.nuget\\packages\\",
-      "outputPath": "D:\\GameLearn\\StateMachineLearn\\obj\\",
+      "projectPath": "C:\\Users\\yi\\Documents\\github\\ProgrammingGameAiByExampleSrc-C-\\StateMachineLearn\\StateMachineLearn.csproj",
+      "packagesPath": "C:\\Users\\yi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\yi\\Documents\\github\\ProgrammingGameAiByExampleSrc-C-\\StateMachineLearn\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\wangtengfei\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\yi\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -60,7 +58,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-preview.7.21379.14\\RuntimeIdentifierGraph.json"
       }
     }
   }

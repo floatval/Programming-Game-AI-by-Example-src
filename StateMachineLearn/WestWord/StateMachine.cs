@@ -50,7 +50,7 @@ public class StateMachine<TOwner> where TOwner: class
    /// </summary>
    /// <param name="state"></param>
    /// <returns></returns>
-   public bool ChangState(IState<TOwner> state)
+   public bool ChangeState(IState<TOwner> state)
    {
       // 1. 如果传入的状态和当前状态一致，则返回false
       if(ReferenceEquals(CurrentState, state))
@@ -79,7 +79,7 @@ public class StateMachine<TOwner> where TOwner: class
    /// <returns></returns>
    public bool RevertToPreviousState()
    {
-      return ChangState(PreviousState);
+      return ChangeState(PreviousState);
    }
    
    /// <summary>

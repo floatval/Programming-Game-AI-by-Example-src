@@ -21,23 +21,15 @@ GameEntityManger.Instance.TryAddNewEntity(miner);
 GameEntityManger.Instance.TryAddNewEntity(wife);
 GameEntityManger.Instance.TryAddNewEntity(fly);
 
-var gameEntities = new List<BaseGameEntity>
-{
-    miner,
-    wife,
-    fly
-};
-
-
 int loopLimit = 100;
 var message = MessageDispatcher.Instance;
 while (loopLimit-- >0)
 {
     Thread.Sleep(100);
-    gameEntities.ForEach(entity =>
-    {
-        entity.Update();
-    });
     
+    // 1. 更新所有实体状态
+    GameEntityManger.Instance.UpdateAllEntity();
+    
+    // 2. 派发消息
     message.DispatchDelayMessage();
 }

@@ -39,7 +39,7 @@ public sealed class InitState : State<Miner>
     /// <param name="owner"></param>
     public override void Execute(Miner owner)
     {
-        owner.FSM.ChangState(new EnterMineAndDigForNuggetState()); 
+        owner.FSM.ChangeState(new EnterMineAndDigForNuggetState()); 
     }
 
     /// <summary>
@@ -109,19 +109,19 @@ public sealed class EnterMineAndDigForNuggetState : State<Miner>
         // 3. 判断背包是否满了
         if (owner.IsPocketsFull())
         {
-            owner.FSM.ChangState(VisitBankAndDepositGoldState.Instance);
+            owner.FSM.ChangeState(VisitBankAndDepositGoldState.Instance);
         }
         
         // 4. 判断饥渴度是否达到了上限
         if (owner.IsThirsty())
         {
-            owner.FSM.ChangState(QuenchThirstState.Instance);
+            owner.FSM.ChangeState(QuenchThirstState.Instance);
         }
         
         // 5. 判断疲劳值是否达到上限
         if (owner.IsFatigued())
         {
-            owner.FSM.ChangState(GoHomeAndSleepTilRestedState.Instance);
+            owner.FSM.ChangeState(GoHomeAndSleepTilRestedState.Instance);
         }
     }
 
@@ -215,17 +215,17 @@ public sealed class VisitBankAndDepositGoldState :State<Miner>
         // 2. 检查饥渴的状态
         if (owner.IsThirsty())
         {
-            owner.FSM.ChangState(QuenchThirstState.Instance);
+            owner.FSM.ChangeState(QuenchThirstState.Instance);
         }
         
         // 3. 检查疲惫状态
         if (owner.IsFatigued())
         {
-            owner.FSM.ChangState(GoHomeAndSleepTilRestedState.Instance);
+            owner.FSM.ChangeState(GoHomeAndSleepTilRestedState.Instance);
         }
         
         // 4. 状态正常去挖矿
-        owner.FSM.ChangState(EnterMineAndDigForNuggetState.Instance);
+        owner.FSM.ChangeState(EnterMineAndDigForNuggetState.Instance);
     }
 
     /// <summary>
@@ -303,9 +303,13 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
         }
         owner.CurrentLocation = Location.LocationType.Home;
 
+        /*
+         错误的处理方式!!,不应该在 Enter 的时候去发消息,让其他关联对象改变状态,
+         如果 Enter 的时候发消息了,会造成,一个 Update (逻辑帧) 里面处理多个状态的迁移,而应该在 Execute 里面进行处理
         // 2. 通知妻子自己回家了
         MessageDispatcher.Instance.DispatchMessage(EntityName.EntityElsa, owner.Name,
             ConstDefine.MessageType.HiHoneyImHome, 0, null);
+        */
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, GoHomeAndSleepTilRestedState，回到家里，并告知妻子自己回来了");
     }
@@ -332,13 +336,13 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
         // 1. 检查饥渴状态
         if(owner.IsThirsty())
         {
-            owner.FSM.ChangState(QuenchThirstState.Instance);
+            owner.FSM.ChangeState(QuenchThirstState.Instance);
         }
         
         // 2. 状态正常 - 去挖矿
         if (owner.IsNotFatigued())
         {
-            owner.FSM.ChangState(EnterMineAndDigForNuggetState.Instance);
+            owner.FSM.ChangeState(EnterMineAndDigForNuggetState.Instance);
         }
     }
 
@@ -374,10 +378,14 @@ public sealed class GoHomeAndSleepTilRestedState :State<Miner>
             case ConstDefine.MessageType.StewReady:
             {
                 WriteExt.WriteBgWhiteAndFgRed($"minderId:{owner.InsId}, 收到肉煮好的消息");
-                owner.FSM.ChangState(EatStew.Instance);
+                owner.FSM.ChangeState(EatStew.Instance);
                 return true;
             }
             case ConstDefine.MessageType.HiHoneyImHome:
+            case ConstDefine.MessageType.FlyImSaloon:
+            case ConstDefine.MessageType.MinerImFlyAttackU:
+            case ConstDefine.MessageType.FlyBeAttacked:
+            case ConstDefine.MessageType.FlySurrender:
             default:
                 return false;
         }
@@ -445,9 +453,12 @@ public class QuenchThirstState :State<Miner>
         }
         owner.CurrentLocation = Location.LocationType.Saloon;
         
+        /*
+         同上个注释, Enter 的时候不应该发消息
         // 2. 发消息给苍蝇
         MessageDispatcher.Instance.DispatchMessage(EntityName.EntityFly, owner.Name,
             ConstDefine.MessageType.FlyImSaloon, 0, null);
+        */
         
         WriteExt.WriteBgWhiteAndFgYellow($"MinerId:{owner.InsId}, QuenchThirstState，进入酒吧");
     }
@@ -464,13 +475,17 @@ public class QuenchThirstState :State<Miner>
             return;
         }
         
+        // 0. 发消息给苍蝇
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityFly, owner.Name,
+            ConstDefine.MessageType.FlyImSaloon, 0, null);
+        
         WriteExt.WriteBgWhiteAndFgBlue($"MinerId:{owner.InsId}, QuenchThirstState，正在解决口渴");
         owner.CurrentThirstLevel--;
 
         // 1. 解决完口渴，去挖矿
         if (owner.IsNotThirsty())
         {
-            owner.FSM.ChangState(EnterMineAndDigForNuggetState.Instance);
+            owner.FSM.ChangeState(EnterMineAndDigForNuggetState.Instance);
         }
     }
 
@@ -532,7 +547,7 @@ public class QuenchThirstState :State<Miner>
         }
         
         // 2. 有苍蝇过来攻击了，进行处理
-        owner.FSM.ChangState(BeingHarassed.Instance);
+        owner.FSM.ChangeState(BeingHarassed.Instance);
 
         return true;
     }
@@ -706,7 +721,7 @@ public sealed class BeingHarassed : State<Miner>
         
         // 1. 转换到攻击状态
         WriteExt.WriteBgWhiteAndFgRed($"minerId{owner.InsId}, 被骚扰，转换到攻击状态");
-        owner.FSM.ChangState(AttackFlyState.Instance);
+        owner.FSM.ChangeState(AttackFlyState.Instance);
         return true;
     }
 
@@ -763,12 +778,43 @@ public sealed class AttackFlyState : State<Miner>
     /// <param name="owner"></param>
     public override void Enter(Miner owner)
     {
+        /*
+         同上
+        // 1. 发消息给苍蝇
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityFly, EntityName.EntityMinerBob,
+            ConstDefine.MessageType.FlyBeAttacked, 0, null);
+        */
+        
+        // 2. 打日志
+        WriteExt.WriteBgWhiteAndFgYellow($"minerId{owner.InsId}, enter attack fly state");
+    }
+
+    /// <summary>
+    ///  运行状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Execute(Miner owner)
+    {
+        // 0. 前置状态判断
+        Debug.Assert(owner.CurrentLocation == Location.LocationType.Saloon,
+            "在攻击苍蝇的状态下 owner.CurrentLocation != Location.LocationType.Saloon");
+        
         // 1. 发消息给苍蝇
         MessageDispatcher.Instance.DispatchMessage(EntityName.EntityFly, EntityName.EntityMinerBob,
             ConstDefine.MessageType.FlyBeAttacked, 0, null);
         
         // 2. 打日志
-        WriteExt.WriteBgWhiteAndFgYellow($"minerId{owner.InsId}, enter attack fly state");
+        WriteExt.WriteBgWhiteAndFgBlue($"MinerId:{owner.InsId}, 正在攻击苍蝇");
+    }
+
+    /// <summary>
+    /// 退出状态处理流程
+    /// </summary>
+    /// <param name="owner"></param>
+    public override void Exit(Miner owner)
+    {
+        // 1. 打日志
+        WriteExt.WriteBgWhiteAndFgRed($"minerId:{owner.InsId}, exit attack fly state");
     }
 
     /// <summary>
@@ -784,9 +830,11 @@ public sealed class AttackFlyState : State<Miner>
             return false;
         }
         
-        // 1. 苍蝇投降了回到之前的状态
-        owner.FSM.ChangState(QuenchThirstState.Instance);
+        // 1. 苍蝇投降了回到之前的状态 - 在攻击之前有个其他状态,所以不能直接进行状态反转,需要手动回到酒馆的状态
+        owner.FSM.ChangeState(QuenchThirstState.Instance);
+        
         WriteExt.WriteBgWhiteAndFgRed($"minerId{owner.InsId}, 苍蝇投降了，回到之前的状态");
+        
         return true;
     }
 

@@ -41,6 +41,28 @@ public class GameEntityManger
     {
         return GameEntities.Values.FirstOrDefault(entity => entity.Name == entityName);
     }
+
+    /// <summary>
+    /// 尝试通过实体名字移除实体
+    /// </summary>
+    /// <param name="insId"></param>
+    /// <returns></returns>
+    public bool TryRemoveEntityByEntityInsId(int insId)
+    {
+        // 1. 尝试在实体管理器中找到实体
+        return GameEntities.TryRemove(insId, out _);
+    }
+
+    /// <summary>
+    /// 更新所有的实例
+    /// </summary>
+    public void UpdateAllEntity()
+    {
+        foreach (var entity in GameEntities.Values)
+        {
+            entity.Update();
+        }
+    }
     
     #region Singleton
 

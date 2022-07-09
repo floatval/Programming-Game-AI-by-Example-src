@@ -1,4 +1,6 @@
-﻿namespace StateMachineLearn;
+﻿using System.Diagnostics;
+
+namespace StateMachineLearn;
 using Location = ConstDefine.Location.LocationType;
 
 /// <summary>
@@ -65,7 +67,8 @@ public sealed class FlyGlobalState : State<Fly>
         }
         
         // 2. 如果是通知在酒馆的状态 - 则随机按照一定概率去执行骚扰动作 - todo
-        owner.FSM.ChangState(HarassmentState.Instance);
+        owner.FSM.ChangeState(HarassmentState.Instance);
+        
         return true;
     }
 
@@ -146,8 +149,12 @@ public sealed class HarassmentState: State<Fly>
     /// <param name="owner"></param>
     public override void Execute(Fly owner)
     {
-        WriteExt.WriteBgWhiteAndFgBlue($"" +
-                                          $"{owner.Name} 运行苍蝇的骚扰人状态");
+        // 1. 发消息给矿工,我要对你进行骚扰了
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, EntityName.EntityFly,
+            ConstDefine.MessageType.MinerImFlyAttackU, 0, null); 
+        
+        // 2. 打日志
+        WriteExt.WriteBgWhiteAndFgBlue($"{owner.Name} 发出了攻击矿工的消息");
     }
 
     /// <summary>
@@ -173,10 +180,15 @@ public sealed class HarassmentState: State<Fly>
         {
             return false;
         }
+
+        // 2. 不是矿工的攻击消息，则返回 false
+        if (message.MessageType != ConstDefine.MessageType.FlyBeAttacked)
+        {
+            return false;
+        }
         
-        // 2. 发信息给矿工
-        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, EntityName.EntityFly,
-            ConstDefine.MessageType.MinerImFlyAttackU, 0, null);
+        // 3. 切换状态到苍蝇的被攻击状态
+        owner.FSM.ChangeState(AttackedState.Instance);
         
         WriteExt.WriteBgWhiteAndFgBlue($"{owner.Name} 苍蝇正在骚扰矿工");
 
@@ -218,6 +230,26 @@ public sealed class AttackedState : State<Fly>
     {
         // 1. 打日志
         WriteExt.WriteBgWhiteAndFgBlue($"{owner.Name} 苍蝇运行被攻击状态");
+        
+        
+        // 2. 只有在酒馆中才能被攻击2. 只有在酒馆中才能被攻击
+        Debug.Assert(owner.CurrentLocation == Location.Saloon, "owner.CurrentLocation != Location.Saloon");
+
+        // 3. 未被击中 - 继续骚扰
+        if (DateTime.Now.Second % 2 != 0)
+        {
+            return;
+        }
+
+        // 4 发信息通知矿工，不用继续攻击了，苍蝇投降了      
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, EntityName.EntityFly,
+            ConstDefine.MessageType.FlySurrender, 0, null);
+            
+        // 5. 打日志
+        WriteExt.WriteBgWhiteAndFgRed($"{owner.Name} 苍蝇被击中了，投降了");
+            
+        // 6. 苍蝇对象的生命周期结束
+        GameEntityManger.Instance.TryRemoveEntityByEntityInsId(owner.InsId);
     }
 
     /// <summary>
@@ -238,19 +270,31 @@ public sealed class AttackedState : State<Fly>
     /// <returns></returns>
     public override bool OnMessage(in Telegram message, Fly owner)
     {
-        if(owner.CurrentLocation!=Location.Saloon)
+        if(owner.CurrentLocation != Location.Saloon)
+        {
+            return false;
+        }
+
+        // 0. 消息不是矿工攻击苍蝇的消息,直接忽略
+        if (message.MessageType != ConstDefine.MessageType.FlyBeAttacked)
         {
             return false;
         }
         
         // 1. 被击中了
-        if (DateTime.Now.Ticks % 2 == 0)
+        if (DateTime.Now.Second % 2 == 0)
         { 
             // 1.1 切换状态到被击中状态
             // 1.1 发信息通知矿工，不用继续攻击了，苍蝇投降了      
             MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, EntityName.EntityFly,
                 ConstDefine.MessageType.FlySurrender, 0, null);
+            
+            // 2. 打日志
             WriteExt.WriteBgWhiteAndFgRed($"{owner.Name} 苍蝇被击中了，投降了");
+            
+            // 3. 苍蝇对象的生命周期结束
+            GameEntityManger.Instance.TryRemoveEntityByEntityInsId(owner.InsId);
+            
             return true;
         }
         
@@ -258,7 +302,7 @@ public sealed class AttackedState : State<Fly>
         if(DateTime.Now.Ticks % 2 != 0)
         { 
             // 2.1 切换状态到躲避状态
-            owner.FSM.ChangState(DodgeState.Instance);
+            owner.FSM.ChangeState(DodgeState.Instance);
             return true;
         }
 
@@ -332,9 +376,11 @@ public sealed class HitBySomethingState : State<Fly>
     /// <param name="owner"></param>
     public override void Enter(Fly owner)
     {
+        /*
         // 1. 发消息给矿工，苍蝇被击中了
         MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, EntityName.EntityFly,
             ConstDefine.MessageType.FlySurrender, 0, null);
+            */
         
         // 2. 打日志
         WriteExt.WriteBgWhiteAndFgRed($"{owner.Name} 苍蝇被击中了，投降了");
@@ -346,8 +392,12 @@ public sealed class HitBySomethingState : State<Fly>
     /// <param name="owner"></param>
     public override void Execute(Fly owner)
     {
+        // 0. 发消息给矿工 - 苍蝇被击落了
+        MessageDispatcher.Instance.DispatchMessage(EntityName.EntityMinerBob, EntityName.EntityFly,
+            ConstDefine.MessageType.FlySurrender, 0, null);
+        
         // 1. 更改为待机状态
-        owner.FSM.ChangState(FlyGlobalState.Instance);
+        owner.FSM.ChangeState(FlyGlobalState.Instance);
         
         // 2. 打日志
         WriteExt.WriteBgWhiteAndFgRed($"{owner.Name} 苍蝇待机，投降了");
@@ -396,7 +446,7 @@ public sealed class DodgeState: State<Fly>
     public override void Execute(Fly owner)
     {
         // 1. 回到全局待机状态
-        owner.FSM.ChangState(FlyGlobalState.Instance);
+        owner.FSM.ChangeState(FlyGlobalState.Instance);
         
         // 2. 打日志
         WriteExt.WriteBgWhiteAndFgBlue($"{owner.Name} 苍蝇运行躲避状态");
