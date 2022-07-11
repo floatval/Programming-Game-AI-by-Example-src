@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineLearn", "StateMachineLearn.csproj", "{6FF6F70F-D41C-4B51-8834-B35F2C0CD78A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteeringBehaviors", "..\SteeringBehaviors\SteeringBehaviors.csproj", "{FEE47B9E-26DB-4E08-A6EF-36A44450D442}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{23A66FE6-6AA5-4B6D-ACCE-20C576D1E26B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FF6F70F-D41C-4B51-8834-B35F2C0CD78A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF6F70F-D41C-4B51-8834-B35F2C0CD78A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF6F70F-D41C-4B51-8834-B35F2C0CD78A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF6F70F-D41C-4B51-8834-B35F2C0CD78A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEE47B9E-26DB-4E08-A6EF-36A44450D442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEE47B9E-26DB-4E08-A6EF-36A44450D442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEE47B9E-26DB-4E08-A6EF-36A44450D442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEE47B9E-26DB-4E08-A6EF-36A44450D442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A66FE6-6AA5-4B6D-ACCE-20C576D1E26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A66FE6-6AA5-4B6D-ACCE-20C576D1E26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A66FE6-6AA5-4B6D-ACCE-20C576D1E26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A66FE6-6AA5-4B6D-ACCE-20C576D1E26B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
